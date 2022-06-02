@@ -6,19 +6,68 @@ dateFromServer=$(curl -v --insecure --silent https://google.com/ 2>&1 | grep Dat
 biji=`date +"%Y-%m-%d" -d "$dateFromServer"`
 #########################
 
+BURIQ () {
+    curl -sS https://raw.githubusercontent.com/irwan-aidan/tetbot/main/skkkk > /root/tmp
+    data=( `cat /root/tmp | grep -E "^### " | awk '{print $2}'` )
+    for user in "${data[@]}"
+    do
+    exp=( `grep -E "^### $user" "/root/tmp" | awk '{print $3}'` )
+    d1=(`date -d "$exp" +%s`)
+    d2=(`date -d "$biji" +%s`)
+    exp2=$(( (d1 - d2) / 86400 ))
+    if [[ "$exp2" -le "0" ]]; then
+    echo $user > /etc/.$user.ini
+    else
+    rm -f /etc/.$user.ini > /dev/null 2>&1
+    fi
+    done
+    rm -f /root/tmp
+}
 
+MYIP=$(curl -sS ipv4.icanhazip.com)
+Name=$(curl -sS https://raw.githubusercontent.com/irwan-aidan/tetbot/main/skkkk | grep $MYIP | awk '{print $2}')
+echo $Name > /usr/local/etc/.$Name.ini
+CekOne=$(cat /usr/local/etc/.$Name.ini)
+
+Bloman () {
+if [ -f "/etc/.$Name.ini" ]; then
+CekTwo=$(cat /etc/.$Name.ini)
+    if [ "$CekOne" = "$CekTwo" ]; then
+        res="Expired"
+    fi
+else
+res="Permission Accepted..."
+fi
+}
+
+PERMISSION () {
+    MYIP=$(curl -sS ipv4.icanhazip.com)
+    IZIN=$(curl -sS https://raw.githubusercontent.com/irwan-aidan/tetbot/main/skkkk | awk '{print $4}' | grep $MYIP)
+    if [ "$MYIP" = "$IZIN" ]; then
+    Bloman
+    else
+    res="Permission Denied!"
+    fi
+    BURIQ
+}
 clear
 red='\e[1;31m'
 green='\e[0;32m'
 NC='\e[0m'
-curl -sS https://notabug.org/sakai/tetbot/raw/main/resources/ascii-home
+curl -sS https://raw.githubusercontent.com/irwan-aidan/tetbot/main/resources/ascii-home
 echo "IPSEC"
 echo "Progress..."
 echo ""
 sleep 3
 green() { echo -e "\\033[32;1m${*}\\033[0m"; }
 red() { echo -e "\\033[31;1m${*}\\033[0m"; }
-
+PERMISSION
+if [ "$res" = "Permission Accepted..." ]; then
+green "Permission Accepted.."
+else
+red "Permission Denied!"
+exit 0
+fi
 echo -e "
 "
 date
@@ -314,19 +363,19 @@ mkdir -p /run/pluto > /dev/null 2>&1
 service fail2ban restart > /dev/null 2>&1
 service ipsec restart > /dev/null 2>&1
 service xl2tpd restart > /dev/null 2>&1
-wget -q -O /usr/bin/add-l2tp https://raw.githubusercontent.com/scvps/scriptvps/main/ipsec/add-l2tp.sh && chmod +x /usr/bin/add-l2tp
-wget -q -O /usr/bin/del-l2tp https://raw.githubusercontent.com/scvps/scriptvps/main/ipsec/del-l2tp.sh && chmod +x /usr/bin/del-l2tp
-wget -q -O /usr/bin/add-pptp https://raw.githubusercontent.com/scvps/scriptvps/main/ipsec/add-pptp.sh && chmod +x /usr/bin/add-pptp
-wget -q -O /usr/bin/del-pptp https://raw.githubusercontent.com/scvps/scriptvps/main/ipsec/del-pptp.sh && chmod +x /usr/bin/del-pptp
-wget -q -O /usr/bin/renew-pptp https://raw.githubusercontent.com/scvps/scriptvps/main/ipsec/renew-pptp.sh && chmod +x /usr/bin/renew-pptp
-wget -q -O /usr/bin/renew-l2tp https://raw.githubusercontent.com/scvps/scriptvps/main/ipsec/renew-l2tp.sh && chmod +x /usr/bin/renew-l2tp
-wget -q -O /usr/bin/trial-pptp https://raw.githubusercontent.com/scvps/scriptvps/main/ipsec/trial-pptp.sh && chmod +x /usr/bin/trial-pptp
-wget -q -O /usr/bin/trial-l2tp https://raw.githubusercontent.com/scvps/scriptvps/main/ipsec/trial-l2tp.sh && chmod +x /usr/bin/trial-l2tp
+wget -q -O /usr/bin/add-l2tp https://raw.githubusercontent.com/irwan-aidan/tetbot/main/ipsec/add-l2tp.sh && chmod +x /usr/bin/add-l2tp
+wget -q -O /usr/bin/del-l2tp https://raw.githubusercontent.com/irwan-aidan/tetbot/main/ipsec/del-l2tp.sh && chmod +x /usr/bin/del-l2tp
+wget -q -O /usr/bin/add-pptp https://raw.githubusercontent.com/irwan-aidan/tetbot/main/ipsec/add-pptp.sh && chmod +x /usr/bin/add-pptp
+wget -q -O /usr/bin/del-pptp https://raw.githubusercontent.com/irwan-aidan/tetbot/main/ipsec/del-pptp.sh && chmod +x /usr/bin/del-pptp
+wget -q -O /usr/bin/renew-pptp https://raw.githubusercontent.com/irwan-aidan/tetbot/main/ipsec/renew-pptp.sh && chmod +x /usr/bin/renew-pptp
+wget -q -O /usr/bin/renew-l2tp https://raw.githubusercontent.com/irwan-aidan/tetbot/main/ipsec/renew-l2tp.sh && chmod +x /usr/bin/renew-l2tp
+wget -q -O /usr/bin/trial-pptp https://raw.githubusercontent.com/irwan-aidan/tetbot/main/ipsec/trial-pptp.sh && chmod +x /usr/bin/trial-pptp
+wget -q -O /usr/bin/trial-l2tp https://raw.githubusercontent.com/irwan-aidan/tetbot/main/ipsec/trial-l2tp.sh && chmod +x /usr/bin/trial-l2tp
 
 touch /var/lib/scrz-prem/data-user-l2tp > /dev/null 2>&1
 touch /var/lib/scrz-prem/data-user-pptp > /dev/null 2>&1
 
-wget -q -O /usr/bin/ipsec-menu "https://raw.githubusercontent.com/scvps/scriptvps/main/menu_all/ipsec-menu.sh" && chmod +x /usr/bin/ipsec-menu
+wget -q -O /usr/bin/ipsec-menu "https://raw.githubusercontent.com/irwan-aidan/tetbot/main/menu_all/ipsec-menu.sh" && chmod +x /usr/bin/ipsec-menu
 
 sleep 1
 yellow() { echo -e "\\033[33;1m${*}\\033[0m"; }
