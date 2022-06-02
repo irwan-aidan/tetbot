@@ -5,7 +5,7 @@ biji=`date +"%Y-%m-%d" -d "$dateFromServer"`
 #########################
 
 BURIQ () {
-    curl -sS https://notabug.org/sakai/tetbot/raw/main/skkkk > /root/tmp
+    curl -sS https://raw.githubusercontent.com/irwan-aidan/tetbot/main/skkkk > /root/tmp
     data=( `cat /root/tmp | grep -E "^### " | awk '{print $2}'` )
     for user in "${data[@]}"
     do
@@ -23,7 +23,7 @@ BURIQ () {
 }
 
 MYIP=$(curl -sS ipv4.icanhazip.com)
-Name=$(curl -sS https://notabug.org/sakai/tetbot/raw/main/skkkk | grep $MYIP | awk '{print $2}')
+Name=$(curl -sS https://raw.githubusercontent.com/irwan-aidan/tetbot/main/skkkk | grep $MYIP | awk '{print $2}')
 echo $Name > /usr/local/etc/.$Name.ini
 CekOne=$(cat /usr/local/etc/.$Name.ini)
 
@@ -40,7 +40,7 @@ fi
 
 PERMISSION () {
     MYIP=$(curl -sS ipv4.icanhazip.com)
-    IZIN=$(curl -sS https://notabug.org/sakai/tetbot/raw/main/skkkk | awk '{print $4}' | grep $MYIP)
+    IZIN=$(curl -sS https://raw.githubusercontent.com/irwan-aidan/tetbot/main/skkkk | awk '{print $4}' | grep $MYIP)
     if [ "$MYIP" = "$IZIN" ]; then
     Bloman
     else
@@ -52,7 +52,7 @@ clear
 red='\e[1;31m'
 green='\e[0;32m'
 NC='\e[0m'
-curl -sS https://notabug.org/sakai/tetbot/raw/main/resources/ascii-home
+curl -sS https://raw.githubusercontent.com/irwan-aidan/tetbot/main/resources/ascii-home
 echo "Wireguard"
 echo "Progress..."
 sleep 3
@@ -144,14 +144,14 @@ WG_RUNNING=$?
 
 # Tambahan
 
-wget -q -O /usr/bin/add-wg "https://notabug.org/sakai/tetbot/raw/main/wireguard/add-wg.sh" && chmod +x /usr/bin/add-wg
-wget -q -O /usr/bin/del-wg "https://notabug.org/sakai/tetbot/raw/main/wireguard/del-wg.sh" && chmod +x /usr/bin/del-wg
-wget -q -O /usr/bin/cek-wg "https://notabug.org/sakai/tetbot/raw/main/wireguard/cek-wg.sh" && chmod +x /usr/bin/cek-wg
-wget -q -O /usr/bin/renew-wg "https://notabug.org/sakai/tetbot/raw/main/wireguard/renew-wg.sh" && chmod +x /usr/bin/renew-wg
-wget -q -O /usr/bin/trial-wg "https://notabug.org/sakai/tetbot/raw/main/wireguard/trial-wg.sh" && chmod +x /usr/bin/trial-wg
-wget -q -O /usr/bin/port-wg "https://notabug.org/sakai/tetbot/raw/main/wireguard/port-wg.sh" && chmod +x /usr/bin/port-wg
+wget -q -O /usr/bin/add-wg "https://raw.githubusercontent.com/irwan-aidan/tetbot/main/wireguard/add-wg.sh" && chmod +x /usr/bin/add-wg
+wget -q -O /usr/bin/del-wg "https://raw.githubusercontent.com/irwan-aidan/tetbot/main/wireguard/del-wg.sh" && chmod +x /usr/bin/del-wg
+wget -q -O /usr/bin/cek-wg "https://raw.githubusercontent.com/irwan-aidan/tetbot/main/wireguard/cek-wg.sh" && chmod +x /usr/bin/cek-wg
+wget -q -O /usr/bin/renew-wg "https://raw.githubusercontent.com/irwan-aidan/tetbot/main/wireguard/renew-wg.sh" && chmod +x /usr/bin/renew-wg
+wget -q -O /usr/bin/trial-wg "https://raw.githubusercontent.com/irwan-aidan/tetbot/main/wireguard/trial-wg.sh" && chmod +x /usr/bin/trial-wg
+wget -q -O /usr/bin/port-wg "https://raw.githubusercontent.com/irwan-aidan/tetbot/main/wireguard/port-wg.sh" && chmod +x /usr/bin/port-wg
 
-wget -q -O /usr/bin/wg-menu "https://notabug.org/sakai/tetbot/raw/main/menu_all/wg-menu.sh" && chmod +x /usr/bin/wg-menu
+wget -q -O /usr/bin/wg-menu "https://raw.githubusercontent.com/irwan-aidan/tetbot/main/menu_all/wg-menu.sh" && chmod +x /usr/bin/wg-menu
 
 sleep 1
 yellow() { echo -e "\\033[33;1m${*}\\033[0m"; }
