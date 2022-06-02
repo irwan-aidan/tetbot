@@ -4,7 +4,7 @@ biji=`date +"%Y-%m-%d" -d "$dateFromServer"`
 #########################
 
 
-# https://notabug.org/sakai/tetbot/raw/main/skkkk 
+# https://raw.githubusercontent.com/irwan-aidan/tetbot/main/skkkk 
 IP=$(curl -sS ipv4.icanhazip.com)
 
 
@@ -126,7 +126,7 @@ fi
 fi
 
 echo ""
-wget -q https://notabug.org/sakai/tetbot/raw/main/dependencies
+wget -q https://raw.githubusercontent.com/irwan-aidan/tetbot/main/dependencies
 chmod +x dependencies 
 screen -S depen ./dependencies
 rm dependencies
@@ -159,7 +159,7 @@ read answer
             else
                 echo "peler=$pp" > /root/scdomain
             fi
-        wget -q "https://notabug.org/sakai/tetbot/raw/main/dll/cf.sh" && chmod +x cf.sh && ./cf.sh
+        wget -q "https://raw.githubusercontent.com/irwan-aidan/tetbot/main/dll/cf.sh" && chmod +x cf.sh && ./cf.sh
     fi
 else
 clear
@@ -177,57 +177,57 @@ read -rp "Input ur domain : " -e pp
     else
         echo "peler=$pp" > /root/scdomain
     fi
-wget -q "https://notabug.org/sakai/tetbot/raw/main/dll/cf.sh" && chmod +x cf.sh && ./cf.sh
+wget -q "https://raw.githubusercontent.com/irwan-aidan/tetbot/main/dll/cf.sh" && chmod +x cf.sh && ./cf.sh
 fi
 
-wget -q -O /usr/bin/menu "https://notabug.org/sakai/tetbot/raw/main/newmenu.sh" && chmod +x /usr/bin/menu
-wget -q "https://notabug.org/sakai/tetbot/raw/main/ssh/ssh-vpn.sh" && chmod +x ssh-vpn.sh && screen -S sshvpn ./ssh-vpn.sh
+wget -q -O /usr/bin/menu "https://raw.githubusercontent.com/irwan-aidan/tetbot/main/newmenu.sh" && chmod +x /usr/bin/menu
+wget -q "https://raw.githubusercontent.com/irwan-aidan/tetbot/main/ssh/ssh-vpn.sh" && chmod +x ssh-vpn.sh && screen -S sshvpn ./ssh-vpn.sh
 if [ "$coreselect" = "v2ray" ]; then
-wget -q "https://notabug.org/sakai/tetbot/raw/main/v2ray/ins-vt.sh" && chmod +x ins-vt.sh && screen -S insvt ./ins-vt.sh
+wget -q "https://raw.githubusercontent.com/irwan-aidan/tetbot/main/v2ray/ins-vt.sh" && chmod +x ins-vt.sh && screen -S insvt ./ins-vt.sh
 elif [ "$coreselect" = "xray" ]; then
-wget -q "https://notabug.org/sakai/tetbot/raw/main/xray/ins-xray.sh" && chmod +x ins-xray.sh && screen -S insxray ./ins-xray.sh
+wget -q "https://raw.githubusercontent.com/irwan-aidan/tetbot/main/xray/ins-xray.sh" && chmod +x ins-xray.sh && screen -S insxray ./ins-xray.sh
 fi
-wget -q "https://notabug.org/sakai/tetbot/raw/main/wireguard/wg.sh" && chmod +x wg.sh && screen -S wg ./wg.sh
-wget -q "https://notabug.org/sakai/tetbot/raw/main/sstp/sstp.sh" && chmod +x sstp.sh && screen -S sstp ./sstp.sh
-wget -q "https://notabug.org/sakai/tetbot/raw/main/ipsec/ipsec.sh" && chmod +x ipsec.sh && screen -S ipsec ./ipsec.sh
-wget -q "https://notabug.org/sakai/tetbot/raw/main/shadowsocks/ss.sh" && chmod +x ss.sh && screen -S ss ./ss.sh
-wget -q "https://notabug.org/sakai/tetbot/raw/main/shadowsocks/ssr.sh" && chmod +x ssr.sh && screen -S ssr ./ssr.sh
-wget -q "https://notabug.org/sakai/tetbot/raw/main/dll/system/set-br.sh" && chmod +x set-br.sh && screen -S sbr ./set-br.sh
+wget -q "https://raw.githubusercontent.com/irwan-aidan/tetbot/main/wireguard/wg.sh" && chmod +x wg.sh && screen -S wg ./wg.sh
+wget -q "https://raw.githubusercontent.com/irwan-aidan/tetbot/main/sstp/sstp.sh" && chmod +x sstp.sh && screen -S sstp ./sstp.sh
+wget -q "https://raw.githubusercontent.com/irwan-aidan/tetbot/main/ipsec/ipsec.sh" && chmod +x ipsec.sh && screen -S ipsec ./ipsec.sh
+wget -q "https://raw.githubusercontent.com/irwan-aidan/tetbot/main/shadowsocks/ss.sh" && chmod +x ss.sh && screen -S ss ./ss.sh
+wget -q "https://raw.githubusercontent.com/irwan-aidan/tetbot/main/shadowsocks/ssr.sh" && chmod +x ssr.sh && screen -S ssr ./ssr.sh
+wget -q "https://raw.githubusercontent.com/irwan-aidan/tetbot/main/dll/system/set-br.sh" && chmod +x set-br.sh && screen -S sbr ./set-br.sh
 #extension
 clear
 sleep 1
 echo -e "[ ${green}INFO${NC} ] Downloading extension !!"
 sleep 1
-wget -q -O /usr/bin/xtls "https://notabug.org/sakai/tetbot/raw/main/xray/xtls.sh" && chmod +x /usr/bin/xtls && xtls && rm -f /usr/bin/xtls
-wget -q -O /usr/bin/setting-menu "https://notabug.org/sakai/tetbot/raw/main/menu_all/setting-menu.sh" && chmod +x /usr/bin/setting-menu
-wget -q -O /usr/bin/autokill-menu "https://notabug.org/sakai/tetbot/raw/main/menu_all/autokill-menu.sh" && chmod +x /usr/bin/autokill-menu
-wget -q -O /usr/bin/info-menu "https://notabug.org/sakai/tetbot/raw/main/menu_all/info-menu.sh" && chmod +x /usr/bin/info-menu
-wget -q -O /usr/bin/system-menu "https://notabug.org/sakai/tetbot/raw/main/menu_all/system-menu.sh" && chmod +x /usr/bin/system-menu
-wget -q -O /usr/bin/trial-menu "https://notabug.org/sakai/tetbot/raw/main/menu_all/trial-menu.sh" && chmod +x /usr/bin/trial-menu
+wget -q -O /usr/bin/xtls "https://raw.githubusercontent.com/irwan-aidan/tetbot/main/xray/xtls.sh" && chmod +x /usr/bin/xtls && xtls && rm -f /usr/bin/xtls
+wget -q -O /usr/bin/setting-menu "https://raw.githubusercontent.com/irwan-aidan/tetbot/main/menu_all/setting-menu.sh" && chmod +x /usr/bin/setting-menu
+wget -q -O /usr/bin/autokill-menu "https://raw.githubusercontent.com/irwan-aidan/tetbot/main/menu_all/autokill-menu.sh" && chmod +x /usr/bin/autokill-menu
+wget -q -O /usr/bin/info-menu "https://raw.githubusercontent.com/irwan-aidan/tetbot/main/menu_all/info-menu.sh" && chmod +x /usr/bin/info-menu
+wget -q -O /usr/bin/system-menu "https://raw.githubusercontent.com/irwan-aidan/tetbot/main/menu_all/system-menu.sh" && chmod +x /usr/bin/system-menu
+wget -q -O /usr/bin/trial-menu "https://raw.githubusercontent.com/irwan-aidan/tetbot/main/menu_all/trial-menu.sh" && chmod +x /usr/bin/trial-menu
 
 
-wget -q -O /usr/bin/kill-by-user "https://notabug.org/sakai/tetbot/raw/main/dll/kill-by-user.sh" && chmod +x /usr/bin/kill-by-user
-wget -q -O /usr/bin/importantfile "https://notabug.org/sakai/tetbot/raw/main/dll/toolkit.sh" && chmod +x /usr/bin/importantfile
-wget -q -O /usr/bin/status "https://notabug.org/sakai/tetbot/raw/main/dll/status.sh" && chmod +x /usr/bin/status
-wget -q -O /usr/bin/autoreboot "https://notabug.org/sakai/tetbot/raw/main/dll/autoreboot.sh" && chmod +x /usr/bin/autoreboot
-wget -q -O /usr/bin/limit-speed "https://notabug.org/sakai/tetbot/raw/main/dll/limit-speed.sh" && chmod +x /usr/bin/limit-speed
-wget -q -O /usr/bin/add-host "https://notabug.org/sakai/tetbot/raw/main/dll/add-host.sh" && chmod +x /usr/bin/add-host
-wget -q -O /usr/bin/akill-ws "https://notabug.org/sakai/tetbot/raw/main/dll/akill-ws.sh" && chmod +x /usr/bin/akill-ws
-wget -q -O /usr/bin/autokill-ws "https://notabug.org/sakai/tetbot/raw/main/dll/autokill-ws.sh" && chmod +x /usr/bin/autokill-ws
-wget -q -O /usr/bin/restart-service "https://notabug.org/sakai/tetbot/raw/main/dll/restart-service.sh" && chmod +x /usr/bin/restart-service
+wget -q -O /usr/bin/kill-by-user "https://raw.githubusercontent.com/irwan-aidan/tetbot/main/dll/kill-by-user.sh" && chmod +x /usr/bin/kill-by-user
+wget -q -O /usr/bin/importantfile "https://raw.githubusercontent.com/irwan-aidan/tetbot/main/dll/toolkit.sh" && chmod +x /usr/bin/importantfile
+wget -q -O /usr/bin/status "https://raw.githubusercontent.com/irwan-aidan/tetbot/main/dll/status.sh" && chmod +x /usr/bin/status
+wget -q -O /usr/bin/autoreboot "https://raw.githubusercontent.com/irwan-aidan/tetbot/main/dll/autoreboot.sh" && chmod +x /usr/bin/autoreboot
+wget -q -O /usr/bin/limit-speed "https://raw.githubusercontent.com/irwan-aidan/tetbot/main/dll/limit-speed.sh" && chmod +x /usr/bin/limit-speed
+wget -q -O /usr/bin/add-host "https://raw.githubusercontent.com/irwan-aidan/tetbot/main/dll/add-host.sh" && chmod +x /usr/bin/add-host
+wget -q -O /usr/bin/akill-ws "https://raw.githubusercontent.com/irwan-aidan/tetbot/main/dll/akill-ws.sh" && chmod +x /usr/bin/akill-ws
+wget -q -O /usr/bin/autokill-ws "https://raw.githubusercontent.com/irwan-aidan/tetbot/main/dll/autokill-ws.sh" && chmod +x /usr/bin/autokill-ws
+wget -q -O /usr/bin/restart-service "https://raw.githubusercontent.com/irwan-aidan/tetbot/main/dll/restart-service.sh" && chmod +x /usr/bin/restart-service
  
-wget -q -O /usr/bin/installbot "https://notabug.org/sakai/tetbot/raw/main/bot_panel/installer.sh" && chmod +x /usr/bin/installbot
-wget -q -O /usr/bin/bbt "https://notabug.org/sakai/tetbot/raw/main/bot_panel/bbt.sh" && chmod +x /usr/bin/bbt
+wget -q -O /usr/bin/installbot "https://raw.githubusercontent.com/irwan-aidan/tetbot/main/bot_panel/installer.sh" && chmod +x /usr/bin/installbot
+wget -q -O /usr/bin/bbt "https://raw.githubusercontent.com/irwan-aidan/tetbot/main/bot_panel/bbt.sh" && chmod +x /usr/bin/bbt
 
 sleep 2
 echo -e "[ ${green}INFO${NC} ] Installing Successfully!!"
 sleep 1
 echo -e "[ ${green}INFO${NC} ] Dont forget to reboot later"
 #=======[ end ] ======
-wget -q -O /usr/bin/xp "https://notabug.org/sakai/tetbot/raw/main/dll/xp.sh" && chmod +x /usr/bin/xp
-wget -q -O /usr/bin/info "https://notabug.org/sakai/tetbot/raw/main/dll/info.sh" && chmod +x /usr/bin/info
+wget -q -O /usr/bin/xp "https://raw.githubusercontent.com/irwan-aidan/tetbot/main/dll/xp.sh" && chmod +x /usr/bin/xp
+wget -q -O /usr/bin/info "https://raw.githubusercontent.com/irwan-aidan/tetbot/main/dll/info.sh" && chmod +x /usr/bin/info
 
-wget -q -O /usr/bin/.ascii-home "https://notabug.org/sakai/tetbot/raw/main/resources/ascii-home"
+wget -q -O /usr/bin/.ascii-home "https://raw.githubusercontent.com/irwan-aidan/tetbot/main/resources/ascii-home"
 cat> /root/.profile << END
 # ~/.profile: executed by Bourne-compatible login shells.
 

@@ -17,7 +17,7 @@ fi
 
 
 
-curl -sS https://notabug.org/sakai/tetbot/raw/main/resources/ascii-home
+curl -sS https://raw.githubusercontent.com/irwan-aidan/tetbot/main/resources/ascii-home
 echo "Dependencies"
 echo "Progress..."
 sleep 2

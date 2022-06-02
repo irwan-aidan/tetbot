@@ -17,7 +17,7 @@ fi
 
 
 
-Exp=$(curl -sS https://notabug.org/sakai/tetbot/raw/main/skkkk | grep $MYIP | awk '{print $3}')
+Exp=$(curl -sS https://raw.githubusercontent.com/irwan-aidan/tetbot/main/skkkk | grep $MYIP | awk '{print $3}')
 
 chck_b(){
 	PID=`ps -ef |grep -v grep | grep scvps_bot |awk '{print $2}'`
@@ -86,7 +86,7 @@ echo -e "\033[0;33mVersion : $(cat /opt/.ver) Update available to $serverV\e[0m"
 echo -e "\033[0;34m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\033[0m"
 echo ""
 echo -e "[ \033[0;31mChangelog\033[0m ]"
-curl -sS https://raw.githubusercontent.com/scvps/scriptvps/main/clgshow
+curl -sS https://raw.githubusercontent.com/irwan-aidan/tetbot/main/clgshow
 echo -e "
 "
 fi
@@ -130,7 +130,7 @@ if [[ $(cat /opt/.ver) = $serverV ]] > /dev/null 2>&1; then
     fi
 else
     if [[ $x -eq 999 ]]; then
-       wget -q -O /usr/bin/update-script "https://notabug.org/sakai/tetbot/raw/main/dll/system/update-script.sh" && chmod +x /usr/bin/update-script
+       wget -q -O /usr/bin/update-script "https://raw.githubusercontent.com/irwan-aidan/tetbot/main/dll/system/update-script.sh" && chmod +x /usr/bin/update-script
        screen -S upds update-script
        menu
     elif [[ $x -eq 1 ]]; then
