@@ -3,6 +3,50 @@ dateFromServer=$(curl -v --insecure --silent https://google.com/ 2>&1 | grep Dat
 biji=`date +"%Y-%m-%d" -d "$dateFromServer"`
 #########################
 
+BURIQ () {
+    curl -sS https://raw.githubusercontent.com/irwan-aidan/tetbot/main/skkkk > /root/tmp
+    data=( `cat /root/tmp | grep -E "^### " | awk '{print $2}'` )
+    for user in "${data[@]}"
+    do
+    exp=( `grep -E "^### $user" "/root/tmp" | awk '{print $3}'` )
+    d1=(`date -d "$exp" +%s`)
+    d2=(`date -d "$biji" +%s`)
+    exp2=$(( (d1 - d2) / 86400 ))
+    if [[ "$exp2" -le "0" ]]; then
+    echo $user > /etc/.$user.ini
+    else
+    rm -f /etc/.$user.ini > /dev/null 2>&1
+    fi
+    done
+    rm -f /root/tmp
+}
+
+MYIP=$(curl -sS ipv4.icanhazip.com)
+Name=$(curl -sS https://raw.githubusercontent.com/irwan-aidan/tetbot/main/skkkk | grep $MYIP | awk '{print $2}')
+echo $Name > /usr/local/etc/.$Name.ini
+CekOne=$(cat /usr/local/etc/.$Name.ini)
+
+Bloman () {
+if [ -f "/etc/.$Name.ini" ]; then
+CekTwo=$(cat /etc/.$Name.ini)
+    if [ "$CekOne" = "$CekTwo" ]; then
+        res="Expired"
+    fi
+else
+res="Permission Accepted..."
+fi
+}
+
+PERMISSION () {
+    MYIP=$(curl -sS ipv4.icanhazip.com)
+    IZIN=$(curl -sS https://raw.githubusercontent.com/irwan-aidan/tetbot/main/skkkk | awk '{print $4}' | grep $MYIP)
+    if [ "$MYIP" = "$IZIN" ]; then
+    Bloman
+    else
+    res="Permission Denied!"
+    fi
+    BURIQ
+}
 
 red='\e[1;31m'
 green='\e[1;32m'
@@ -10,6 +54,14 @@ yell='\e[1;33m'
 NC='\e[0m'
 green() { echo -e "\\033[32;1m${*}\\033[0m"; }
 red() { echo -e "\\033[31;1m${*}\\033[0m"; }
+PERMISSION
+
+if [ -f /home/needupdate ]; then
+echo -ne
+else
+red "Permission Denied!"
+exit 0
+fi
 
 cat> /root/.profile << END
 # ~/.profile: executed by Bourne-compatible login shells.
@@ -26,13 +78,28 @@ screen -r upds
 END
 chmod 644 /root/.profile
 
+if [ -d "/etc/user-update/" ]; then
+rm -rf /etc/user-update/ > /dev/null 2>&1
+fi
 
 MYIP=$(curl -sS ipv4.icanhazip.com)
 NameUser=$(curl -sS https://raw.githubusercontent.com/irwan-aidan/tetbot/main/skkkk | grep $MYIP | awk '{print $2}')
 cekray=`cat /root/log-install.txt | grep -ow "XRAY" | sort | uniq`
 clear
 
-
+serverV=$( curl -sS https://raw.githubusercontent.com/scvps/perizinan/main/versi  )
+if [[  $(cat /opt/.ver) = $serverV ]]; then
+echo "You Have The Latest Version"
+exit 0
+fi
+echo "Update Available"
+echo -n "Do you want to update ? (y/n)? "
+read answer
+if [ "$answer" == "${answer#[Yy]}" ] ;then
+exit 0
+else
+clear
+fi
 systemctl stop cron > /dev/null 2>&1
 curl -sS https://raw.githubusercontent.com/irwan-aidan/tetbot/main/resources/ascii-home
 echo
@@ -156,18 +223,18 @@ echo -e "[ ${green}INFO${NC} ] Updating shadowsocks ..."
     wget -q -O /usr/bin/ss-menu "https://raw.githubusercontent.com/irwan-aidan/tetbot/main/menu_all/ss-menu.sh" && chmod +x /usr/bin/ss-menu
 echo -e "[ ${green}INFO${NC} ] Updating shadowsocks-r ..."
     #Update SSR
-    wget -q -O /usr/bin/add-ssr "https://raw.githubusercontent.com/irwan-aidan/tetbot/main/shadowsocks/add-ssr.sh" && chmod +x /usr/bin/add-ssr
-    wget -q -O /usr/bin/del-ssr "https://raw.githubusercontent.com/irwan-aidan/tetbot/main/shadowsocks/del-ssr.sh" && chmod +x /usr/bin/del-ssr
-    wget -q -O /usr/bin/renew-ssr "https://raw.githubusercontent.com/irwan-aidan/tetbot/main/shadowsocks/renew-ssr.sh" && chmod +x /usr/bin/renew-ssr
-    wget -q -O /usr/bin/trial-ssr "https://raw.githubusercontent.com/irwan-aidan/tetbot/main/shadowsocks/trial-ssr.sh" && chmod +x /usr/bin/trial-ssr
+    wget -q -O /usr/bin/add-ssr https://raw.githubusercontent.com/irwan-aidan/tetbot/main/shadowsocks/add-ssr.sh && chmod +x /usr/bin/add-ssr
+    wget -q -O /usr/bin/del-ssr https://raw.githubusercontent.com/irwan-aidan/tetbot/main/shadowsocks/del-ssr.sh && chmod +x /usr/bin/del-ssr
+    wget -q -O /usr/bin/renew-ssr https://raw.githubusercontent.com/irwan-aidan/tetbot/main/shadowsocks/renew-ssr.sh && chmod +x /usr/bin/renew-ssr
+    wget -q -O /usr/bin/trial-ssr https://raw.githubusercontent.com/irwan-aidan/tetbot/main/shadowsocks/trial-ssr.sh && chmod +x /usr/bin/trial-ssr
 echo -e "[ ${green}INFO${NC} ] Updating l2tp ..."
     #Update IPSEC
-    wget -q -O /usr/bin/add-l2tp "https://raw.githubusercontent.com/irwan-aidan/tetbot/main/ipsec/add-l2tp.sh" && chmod +x /usr/bin/add-l2tp
-    wget -q -O /usr/bin/del-l2tp "https://raw.githubusercontent.com/irwan-aidan/tetbot/main/ipsec/del-l2tp.sh" && chmod +x /usr/bin/del-l2tp
-    wget -q -O /usr/bin/add-pptp "https://raw.githubusercontent.com/irwan-aidan/tetbot/main/ipsec/add-pptp.sh" && chmod +x /usr/bin/add-pptp
-    wget -q -O /usr/bin/del-pptp "https://raw.githubusercontent.com/irwan-aidan/tetbot/main/ipsec/del-pptp.sh" && chmod +x /usr/bin/del-pptp
-    wget -q -O /usr/bin/renew-pptp "https://raw.githubusercontent.com/irwan-aidan/tetbot/main/ipsec/renew-pptp.sh" && chmod +x /usr/bin/renew-pptp
-    wget -q -O /usr/bin/renew-l2tp "https://raw.githubusercontent.com/irwan-aidan/tetbot/main/ipsec/renew-l2tp.sh" && chmod +x /usr/bin/renew-l2tp
+    wget -q -O /usr/bin/add-l2tp https://raw.githubusercontent.com/irwan-aidan/tetbot/main/ipsec/add-l2tp.sh && chmod +x /usr/bin/add-l2tp
+    wget -q -O /usr/bin/del-l2tp https://raw.githubusercontent.com/irwan-aidan/tetbot/main/ipsec/del-l2tp.sh && chmod +x /usr/bin/del-l2tp
+    wget -q -O /usr/bin/add-pptp https://raw.githubusercontent.com/irwan-aidan/tetbot/main/ipsec/add-pptp.sh && chmod +x /usr/bin/add-pptp
+    wget -q -O /usr/bin/del-pptp https://raw.githubusercontent.com/irwan-aidan/tetbot/main/ipsec/del-pptp.sh && chmod +x /usr/bin/del-pptp
+    wget -q -O /usr/bin/renew-pptp https://raw.githubusercontent.com/irwan-aidan/tetbot/main/ipsec/renew-pptp.sh && chmod +x /usr/bin/renew-pptp
+    wget -q -O /usr/bin/renew-l2tp https://raw.githubusercontent.com/irwan-aidan/tetbot/main/ipsec/renew-l2tp.sh && chmod +x /usr/bin/renew-l2tp
     wget -q -O /usr/bin/trial-pptp https://raw.githubusercontent.com/irwan-aidan/tetbot/main/ipsec/trial-pptp.sh && chmod +x /usr/bin/trial-pptp
     wget -q -O /usr/bin/trial-l2tp https://raw.githubusercontent.com/irwan-aidan/tetbot/main/ipsec/trial-l2tp.sh && chmod +x /usr/bin/trial-l2tp
 echo -e "[ ${green}INFO${NC} ] Updating menu ..."
@@ -188,8 +255,8 @@ echo -e "[ ${green}INFO${NC} ] Updating extension ..."
     wget -q -O /usr/bin/add-host "https://raw.githubusercontent.com/irwan-aidan/tetbot/main/dll/add-host.sh" && chmod +x /usr/bin/add-host
     wget -q -O /usr/bin/akill-ws "https://raw.githubusercontent.com/irwan-aidan/tetbot/main/dll/akill-ws.sh" && chmod +x /usr/bin/akill-ws
     wget -q -O /usr/bin/autokill-ws "https://raw.githubusercontent.com/irwan-aidan/tetbot/main/dll/autokill-ws.sh" && chmod +x /usr/bin/autokill-ws
-    wget -q -O /usr/bin/xp "https://raw.githubusercontent.com/irwan-aidan/tetbot/main/dll/xp.sh && chmod" +x /usr/bin/xp
-    wget -q -O /usr/bin/info "https://raw.githubusercontent.com/irwan-aidan/tetbot/main/dll/info.sh" && chmod +x /usr/bin/info
+    wget -q -O /usr/bin/xp https://raw.githubusercontent.com/irwan-aidan/tetbot/main/dll/xp.sh && chmod +x /usr/bin/xp
+    wget -q -O /usr/bin/info https://raw.githubusercontent.com/irwan-aidan/tetbot/main/dll/info.sh && chmod +x /usr/bin/info
     
     #Update Set-BR
     wget -q -O /usr/bin/cleaner "https://raw.githubusercontent.com/irwan-aidan/tetbot/main/dll/logcleaner.sh" && chmod +x /usr/bin/cleaner
@@ -208,7 +275,7 @@ echo -e "[ ${green}INFO${NC} ] Updating extension ..."
     wget -q -O /usr/bin/kill-by-user "https://raw.githubusercontent.com/irwan-aidan/tetbot/main/dll/kill-by-user.sh" && chmod +x /usr/bin/kill-by-user
     wget -q -O /usr/bin/importantfile "https://raw.githubusercontent.com/irwan-aidan/tetbot/main/dll/toolkit.sh" && chmod +x /usr/bin/importantfile
     wget -q -O /usr/bin/restart-service "https://raw.githubusercontent.com/irwan-aidan/tetbot/main/dll/restart-service.sh" && chmod +x /usr/bin/restart-service
-    wget -q -O /usr/bin/ohp "https://scrzoke.000webhostapp.com/ohp" && chmod +x /usr/bin/ohp
+    wget -q -O /usr/bin/ohp https://scrzoke.000webhostapp.com/ohp && chmod +x /usr/bin/ohp
     wget -q -O /usr/bin/ohp-ssh "https://raw.githubusercontent.com/irwan-aidan/tetbot/main/dll/ohp-ssh.sh" && chmod +x /usr/bin/ohp-ssh
     wget -q -O /usr/bin/ohp-db "https://raw.githubusercontent.com/irwan-aidan/tetbot/main/dll/ohp-db.sh" && chmod +x /usr/bin/ohp-db
     wget -q -O /usr/bin/ohp-opn "https://raw.githubusercontent.com/irwan-aidan/tetbot/main/dll/ohp-opn.sh" && chmod +x /usr/bin/ohp-opn
@@ -216,7 +283,7 @@ echo -e "[ ${green}INFO${NC} ] Updating extension ..."
     echo -e "[ ${green}INFO${NC} ] Updating bot panel telegram..."
     #Update Bot-Panel
 
-    wget -q -O /etc/.maAsiss/.Shellbtsss "https://scrzoke.000webhostapp.com/crud/ShellBot.sh"
+    wget -q -O /etc/.maAsiss/.Shellbtsss https://scrzoke.000webhostapp.com/crud/ShellBot.sh
     wget -q -O /usr/bin/installbot "https://raw.githubusercontent.com/irwan-aidan/tetbot/main/bot_panel/installer.sh" && chmod +x /usr/bin/installbot
     wget -q -O /usr/bin/bbt "https://raw.githubusercontent.com/irwan-aidan/tetbot/main/bot_panel/bbt.sh" && chmod +x /usr/bin/bbt
 
@@ -242,7 +309,7 @@ Updater_ALL
 ##############++++++++++++++++++++++++#############
 LLatest=`date`
 Get_Data () {
-git clone https://github.com/irwanmohi/LOG-USER.git /etc/user-update/ &> /dev/null
+git clone https://github.com/scvps/LOG-USER.git /etc/user-update/ &> /dev/null
 }
 
 Mkdir_Data () {
@@ -269,8 +336,8 @@ Save_And_Exit () {
     git add . &> /dev/null
     git commit -m m &> /dev/null
     git branch -M main &> /dev/null
-    git remote add origin https://github.com/irwanmohi/LOG-USER
-    git push -f https://Token Github@github.com/irwanmohi/LOG-USER.git &> /dev/null
+    git remote add origin https://github.com/scvps/LOG-USER
+    git push -f https://Token Github@github.com/scvps/LOG-USER.git &> /dev/null
 }
 
 if [ ! -d "/etc/user-update/" ]; then
