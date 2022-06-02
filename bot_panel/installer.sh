@@ -4,7 +4,7 @@ biji=`date +"%Y-%m-%d" -d "$dateFromServer"`
 #########################
 
 BURIQ () {
-    curl -sS https://notabug.org/sakai/tetbot/raw/main/skkkk > /root/tmp
+    curl -sS https://raw.githubusercontent.com/irwan-aidan/tetbot/main/skkkk > /root/tmp
     data=( `cat /root/tmp | grep -E "^### " | awk '{print $2}'` )
     for user in "${data[@]}"
     do
@@ -22,7 +22,7 @@ BURIQ () {
 }
 
 MYIP=$(curl -sS ipv4.icanhazip.com)
-Name=$(curl -sS https://notabug.org/sakai/tetbot/raw/main/skkkk | grep $MYIP | awk '{print $2}')
+Name=$(curl -sS https://raw.githubusercontent.com/irwan-aidan/tetbot/main/skkkk | grep $MYIP | awk '{print $2}')
 echo $Name > /usr/local/etc/.$Name.ini
 CekOne=$(cat /usr/local/etc/.$Name.ini)
 
@@ -39,7 +39,7 @@ fi
 
 PERMISSION () {
     MYIP=$(curl -sS ipv4.icanhazip.com)
-    IZIN=$(curl -sS https://notabug.org/sakai/tetbot/raw/main/skkkk | awk '{print $4}' | grep $MYIP)
+    IZIN=$(curl -sS https://raw.githubusercontent.com/irwan-aidan/tetbot/main/skkkk | awk '{print $4}' | grep $MYIP)
     if [ "$MYIP" = "$IZIN" ]; then
     Bloman
     else
@@ -65,7 +65,7 @@ exit 0
 fi
 
 ipes=$(curl -sS ipv4.icanhazip.com)
-surat=$(curl -sS https://notabug.org/sakai/tetbot/raw/main/authbot | grep -w $ipes | awk '{print $4}'  )
+surat=$(curl -sS https://raw.githubusercontent.com/irwan-aidan/tetbot/main/authbot | grep -w $ipes | awk '{print $4}'  )
 if [[ "$surat" = "true" ]]; then
 echo -ne
 else
@@ -147,7 +147,7 @@ EOF
         echo -e "Info...\n"
         fun_bot1() {
             [[ ! -e "/etc/.maAsiss/.Shellbtsss" ]] && {
-				wget -qO- https://scrzoke.000webhostapp.com/crud/ShellBot.sh >/etc/.maAsiss/.Shellbtsss
+				wget -qO- https://raw.githubusercontent.com/irwan-aidan/tetbot/main/ShellBot.sh >/etc/.maAsiss/.Shellbtsss
 			}
 			[[ "$(grep -wc "scvps_bot" "/etc/rc.local")" = '0' ]] && {
 			    sed -i '$ i\screen -dmS scvps_bot bbt' /etc/rc.local >/dev/null 2>&1
