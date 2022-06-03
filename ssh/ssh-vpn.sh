@@ -1,13 +1,10 @@
 #!/bin/bash
-#
-# ==================================================
-# initializing var
 dateFromServer=$(curl -v --insecure --silent https://google.com/ 2>&1 | grep Date | sed -e 's/< Date: //')
 biji=`date +"%Y-%m-%d" -d "$dateFromServer"`
 #########################
 
 BURIQ () {
-    curl -sS https://raw.githubusercontent.com/tesbot07/tesbot07/main/skkkk > /root/tmp
+    curl -sS https://raw.githubusercontent.com/irwan-aidan/tetbot/main/skkkk > /root/tmp
     data=( `cat /root/tmp | grep -E "^### " | awk '{print $2}'` )
     for user in "${data[@]}"
     do
@@ -25,7 +22,7 @@ BURIQ () {
 }
 
 MYIP=$(curl -sS ipv4.icanhazip.com)
-Name=$(curl -sS https://raw.githubusercontent.com/tesbot07/tesbot07/main/skkkk | grep $MYIP | awk '{print $2}')
+Name=$(curl -sS https://raw.githubusercontent.com/irwan-aidan/tetbot/main/skkkk | grep $MYIP | awk '{print $2}')
 echo $Name > /usr/local/etc/.$Name.ini
 CekOne=$(cat /usr/local/etc/.$Name.ini)
 
@@ -42,7 +39,7 @@ fi
 
 PERMISSION () {
     MYIP=$(curl -sS ipv4.icanhazip.com)
-    IZIN=$(curl -sS https://raw.githubusercontent.com/tesbot07/tesbot07/main/skkkk | awk '{print $4}' | grep $MYIP)
+    IZIN=$(curl -sS https://raw.githubusercontent.com/irwan-aidan/tetbot/main/skkkk | awk '{print $4}' | grep $MYIP)
     if [ "$MYIP" = "$IZIN" ]; then
     Bloman
     else
@@ -76,13 +73,13 @@ source /etc/os-release
 ver=$VERSION_ID
 
 #detail nama perusahaan
-country=MY
-state=SEL
-locality=Gombak
-organization=Vpnku
-organizationalunit=Vpnku
-commonname=Vpnku
-email=server@vpnku.cf
+country=ID
+state=ID
+locality=ID
+organization=None
+organizationalunit=None
+commonname=None
+email=github@scvps
 
 # simple password minimal
 curl -sS https://raw.githubusercontent.com/irwan-aidan/tetbot/main/ssh/password | openssl aes-256-cbc -d -a -pass pass:scvps07gg -pbkdf2 > /etc/pam.d/common-password
@@ -136,8 +133,8 @@ sed -i '$ i\echo 1 > /proc/sys/net/ipv6/conf/all/disable_ipv6' /etc/rc.local >/d
 
 # set time GMT +7
 sleep 1
-echo -e "[ ${green}INFO$NC ] Set zona local time to Asia/Jakarta GMT+7"
-ln -fs /usr/share/zoneinfo/Asia/Jakarta /etc/localtime
+echo -e "[ ${green}INFO$NC ] Set zona local time to Asia/Kuala_Lumpur GMT+7"
+ln -fs /usr/share/zoneinfo/Asia/Kuala_Lumpur /etc/localtime
 
 # set locale
 sed -i 's/AcceptEnv/#AcceptEnv/g' /etc/ssh/sshd_config
@@ -321,7 +318,7 @@ sed -i 's/ENABLED=0/ENABLED=1/g' /etc/default/stunnel4
 #OpenVPN
 sleep 1
 echo -e "[ ${green}INFO$NC ] Install Openvpn"
-wget -q https://raw.githubusercontent.com/irwan-aidan/tetbot/main/ssh/vpn.sh &&  chmod +x vpn.sh && ./vpn.sh
+wget -q "https://raw.githubusercontent.com/irwan-aidan/tetbot/main/ssh/vpn.sh" &&  chmod +x vpn.sh && ./vpn.sh
 
 # install fail2ban
 # Instal DDOS Flate
