@@ -1,0 +1,167 @@
+#!/bin/bash
+#
+# ==================================================
+dateFromServer=$(curl -v --insecure --silent https://google.com/ 2>&1 | grep Date | sed -e 's/< Date: //')
+biji=`date +"%Y-%m-%d" -d "$dateFromServer"`
+#########################
+
+
+# initialisasi var
+export DEBIAN_FRONTEND=noninteractive
+OS=`uname -m`;
+MYIP=$(curl -sS ifconfig.me);
+MYIP2="s/xxxxxxxxx/$MYIP/g";
+ANU=$(ip -o $ANU -4 route show to default | awk '{print $5}');
+
+
+[[ "$EUID" -ne 0 ]] && exit 1 || cd && clear
+
+apt install openvpn -y
+apt install easy-rsa -y
+systemctl disable openvpn
+systemctl stop openvpn
+
+cd
+mkdir -p /usr/lib/openvpn/
+cp /usr/lib/x86_64-linux-gnu/openvpn/plugins/openvpn-plugin-auth-pam.so /usr/lib/openvpn/openvpn-plugin-auth-pam.so >/dev/null 2>&1
+
+# nano /etc/default/openvpn
+sed -i 's/#AUTOSTART="all"/AUTOSTART="all"/g' /etc/default/openvpn
+
+
+wget -q -O /usr/share/easy-rsa/vars "https://notabug.org/irwanmohi/test/raw/master/vars" && cd /usr/share/easy-rsa
+./easyrsa --batch init-pki
+./easyrsa --batch build-ca nopass
+./easyrsa --batch gen-dh
+./easyrsa --batch build-server-full server nopass
+cd && cp -R /usr/share/easy-rsa/pki /etc/openvpn/
+[[ -d /etc/openvpn/server ]] && rm -d /etc/openvpn/server
+
+IPADDR=$(grep -sw 'IPADDR' /etc/environment | cut -d '=' -f 2)
+COUNTRY=$(grep -sw 'COUNTRY' /etc/environment | cut -d '=' -f 2)
+
+echo "port 1194
+proto tcp
+dev tun
+
+ca /etc/openvpn/pki/ca.crt
+cert /etc/openvpn/pki/issued/server.crt
+key /etc/openvpn/pki/private/server.key
+dh /etc/openvpn/pki/dh.pem
+
+server 10.8.0.0 255.255.255.0
+ifconfig-pool-persist ipp.txt
+push \"redirect-gateway def1 bypass-dhcp\"
+push \"dhcp-option DNS 1.1.1.1\"
+push \"dhcp-option DNS 8.8.8.8\"
+keepalive 5 60
+cipher AES-256-GCM
+comp-lzo
+user nobody
+group nogroup
+persist-key
+persist-tun
+topology subnet
+status /var/log/openvpn/stat-tcp.log
+log /var/log/openvpn/ovpn-tcp.log
+verb 3
+mute 20
+management 127.0.0.1 5555
+verify-client-cert none
+plugin /usr/lib/x86_64-linux-gnu/openvpn/plugins/openvpn-plugin-auth-pam.so login
+username-as-common-name" >/etc/openvpn/server-tcp.conf
+
+echo "# ----------------------------
+# OPENVPN BY $DOMAIN
+# ----------------------------
+client
+dev tun
+proto tcp
+remote $IPADDR 1194
+;remote $DOMAIN 1194
+resolv-retry infinite
+nobind
+user nobody
+group nogroup
+persist-key
+persist-tun
+;http-proxy-retry
+;http-proxy $IPADDR 3128
+;http-proxy-option CUSTOM-HEADER Protocol HTTP/1.1
+;http-proxy-option CUSTOM-HEADER Host HOSTNAME
+mute-replay-warnings
+remote-cert-tls server
+cipher AES-256-GCM
+comp-lzo
+verb 3
+mute 20
+auth-user-pass" >/etc/openvpn/client/client-tcp.ovpn
+
+echo "" >>/etc/openvpn/client/client-tcp.ovpn
+echo "<ca>" >>/etc/openvpn/client/client-tcp.ovpn
+cat /etc/openvpn/pki/ca.crt >>/etc/openvpn/client/client-tcp.ovpn
+echo "</ca>" >>/etc/openvpn/client/client-tcp.ovpn
+cp /etc/openvpn/client/client-tcp.ovpn /var/www/html/client-tcp.ovpn
+
+echo "port 587
+proto tcp
+dev tun
+
+ca /etc/openvpn/pki/ca.crt
+cert /etc/openvpn/pki/issued/server.crt
+key /etc/openvpn/pki/private/server.key
+dh /etc/openvpn/pki/dh.pem
+
+server 10.8.0.0 255.255.255.0
+ifconfig-pool-persist ipp.txt
+push \"redirect-gateway def1 bypass-dhcp\"
+push \"dhcp-option DNS 8.8.8.8\"
+push \"dhcp-option DNS 1.1.1.1\"
+route $IPADDR 255.255.255.255 net_gateway
+keepalive 5 60
+cipher AES-256-GCM
+comp-lzo
+user nobody
+group nogroup
+persist-key
+persist-tun
+topology subnet
+status /var/log/openvpn/stat-tls.log
+log /var/log/openvpn/ovpn-tls.log
+verb 3
+mute 20
+verify-client-cert none
+plugin /usr/lib/x86_64-linux-gnu/openvpn/plugins/openvpn-plugin-auth-pam.so login
+username-as-common-name" >/etc/openvpn/server-tls.conf
+
+echo "# ----------------------------
+# OPENVPN BY $DOMAIN
+# ----------------------------
+client
+dev tun
+proto tcp
+remote $IPADDR 587
+;remote $DOMAIN 587
+resolv-retry infinite
+nobind
+user nobody
+group nogroup
+persist-key
+persist-tun
+mute-replay-warnings
+remote-cert-tls server
+cipher AES-256-GCM
+comp-lzo
+verb 3
+mute 20
+auth-user-pass" >/etc/openvpn/client/client-tls.ovpn
+
+echo "" >>/etc/openvpn/client/client-tls.ovpn
+echo "<ca>" >>/etc/openvpn/client/client-tls.ovpn
+cat /etc/openvpn/pki/ca.crt >>/etc/openvpn/client/client-tls.ovpn
+echo "</ca>" >>/etc/openvpn/client/client-tls.ovpn
+cp /etc/openvpn/client/client-tls.ovpn /var/www/html/client-tls.ovpn
+
+systemctl enable openvpn@server-tcp
+systemctl enable openvpn@server-tls
+rm /root/openvpn.sh
