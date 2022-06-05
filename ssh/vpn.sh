@@ -66,14 +66,14 @@ fi
 # INSTALL # OPENVPN PACKAGE #
 #############################
 echo -n "Pasang pakej openvpn... ";
-apt-get -y -qq install openvpn &>/dev/null
+apt-get -y -qq install openvpn
 cd /usr/share/easy-rsa
-./easyrsa --batch init-pki &>/dev/null
-./easyrsa --batch build-ca nopass &>/dev/null
-./easyrsa --batch gen-dh &>/dev/null
-./easyrsa --batch build-server-full server nopass &>/dev/null
-./easyrsa --batch build-client-full client nopass &>/dev/null
-openvpn --genkey --secret /usr/share/easy-rsa/pki/ta.key &>/dev/null
+./easyrsa --batch init-pki
+./easyrsa --batch build-ca nopass
+./easyrsa --batch gen-dh
+./easyrsa --batch build-server-full server nopass
+./easyrsa --batch build-client-full client nopass
+openvpn --genkey --secret /usr/share/easy-rsa/pki/ta.key
 cp -R /usr/share/easy-rsa/pki /etc/openvpn/ && cd
 
 [[ -d /etc/openvpn/server ]] && rm -d /etc/openvpn/server
