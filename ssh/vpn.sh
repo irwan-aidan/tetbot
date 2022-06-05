@@ -68,6 +68,21 @@ fi
 echo -n "Pasang pakej openvpn... ";
 apt-get -y -qq install openvpn
 cd /usr/share/easy-rsa
+
+cat > /etc/openvpn/easy-rsa/vars << EOF
+set_var EASYRSA_REQ_COUNTRY    "MY"
+set_var EASYRSA_REQ_PROVINCE   "Selangor"
+set_var EASYRSA_REQ_CITY       "Gombak"
+set_var EASYRSA_REQ_ORG        "Copyleft Certificate vpnku"
+set_var EASYRSA_REQ_EMAIL      "irwanmohi@gmail.com"
+set_var EASYRSA_REQ_OU         "VPNKU Script"
+set_var EASYRSA_ALGO           "ec"
+set_var EASYRSA_DIGEST         "sha512"
+set_var EASYRSA_REQ_CN         "VPNKU-Script"
+EOF
+cd
+
+
 ./easyrsa --batch init-pki
 ./easyrsa --batch build-ca nopass
 ./easyrsa --batch gen-dh
@@ -80,6 +95,11 @@ cp -R /usr/share/easy-rsa/pki /etc/openvpn/ && cd
 [[ -d /etc/openvpn/client ]] && rm -d /etc/openvpn/client
 systemctl stop openvpn &>/dev/null
 systemctl disable openvpn &>/dev/null
+
+cd
+mkdir -p /usr/lib/openvpn/
+cp /usr/lib/x86_64-linux-gnu/openvpn/plugins/openvpn-plugin-auth-pam.so /usr/lib/openvpn/openvpn-plugin-auth-pam.so
+
 
 echo "# OVPN SERVER-TCP CONFIG
 # ----------------------------
