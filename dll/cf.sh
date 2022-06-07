@@ -70,9 +70,9 @@ fi
 
 source /root/scdomain
 SUB_DOMAIN=$peler
-DOMAIN=aww.com
-CF_ID=nandorz@gmail.com
-CF_KEY=0bf3a3094ea9199e9c2cf90714425191
+DOMAIN=regsub.cf
+CF_ID=irwan@aidan.my
+CF_KEY=9531fde17724c8f2b297980c00498bc359e80
 set -euo pipefail
 IP=$(curl -sS ifconfig.me);
 echo "Updating DNS for ${SUB_DOMAIN}..."
