@@ -293,7 +293,7 @@ setenv CLIENT_CERT 0
 client
 dev tun
 proto tcp
-remote xxxxxxxxx 992
+remote xxxxxxxxx 442
 resolv-retry infinite
 route-method exe
 nobind
