@@ -112,7 +112,7 @@ EOF
 cd
 
 # Create the PKI, set up the CA and the server and client certificates
-cd /etc/openvpn/easy-rsa/
+cd /usr/share/easy-rsa
 ./easyrsa --batch init-pki
 ./easyrsa --batch build-ca nopass
 openssl dhparam -out /etc/openvpn/dh2048.pem 2048
