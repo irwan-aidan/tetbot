@@ -82,7 +82,10 @@ MySentev="$(cat /etc/hostname)";
 apt-get install -y openvpn dnsutils easy-rsa unzip 
 apt install -y openvpn dnsutils easy-rsa unzip 
 apt-get install -y  openssl iptables iptables-persistent 
-apt install -y  openssl iptables iptables-persistent 
+apt install -y  openssl iptables iptables-persistent
+
+# nano /etc/default/openvpn
+sed -i 's/#AUTOSTART="all"/AUTOSTART="all"/g' /etc/default/openvpn
 
 # Installing OpenVPN by pulling its repository inside sources.list file 
 rm -rf /etc/apt/sources.list.d/openvpn*
@@ -112,7 +115,7 @@ EOF
 cd
 
 # Create the PKI, set up the CA and the server and client certificates
-cd /usr/share/easy-rsa
+cd /etc/openvpn/server/easy-rsa
 ./easyrsa --batch init-pki
 ./easyrsa --batch build-ca nopass
 openssl dhparam -out /etc/openvpn/dh2048.pem 2048
@@ -120,10 +123,6 @@ EASYRSA_CERT_EXPIRE=3650 ./easyrsa --batch build-server-full server nopass
 EASYRSA_CERT_EXPIRE=3650 ./easyrsa --batch build-client-full client nopass
 EASYRSA_CRL_DAYS=3650 ./easyrsa --batch gen-crl
 openvpn --genkey --secret /etc/openvpn/ta.key 
-[[ -d /etc/openvpn/server ]] && rm -d /etc/openvpn/server
-[[ -d /etc/openvpn/client ]] && rm -d /etc/openvpn/client
-systemctl stop openvpn
-systemctl disable openvpn
 
 # Move the stuff we need
 cd /etc/openvpn/server/easy-rsa/
@@ -139,7 +138,6 @@ chmod o+x /etc/openvpn/
 # Generate key for tls-crypt
 openvpn --genkey --secret /etc/openvpn/tc.key
 sudo openvpn --genkey --secret /etc/openvpn/ta.key
-
 
 cd
 mkdir -p /usr/lib/openvpn/
