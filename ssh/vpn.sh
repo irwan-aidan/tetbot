@@ -96,7 +96,7 @@ apt-get install openvpn
         mkdir -p /etc/openvpn/easy-rsa/
         { wget -qO- "$easy_rsa_url" 2>/dev/null || curl -sL "$easy_rsa_url" ; } | tar xz -C /etc/openvpn/easy-rsa/ --strip-components 1
         chown -R root:root /etc/openvpn/easy-rsa/
-        cd /etc/openvpn/easy-rsa/
+        cd /etc/openvpn/easy-rsa/ || wget -q "https://raw.githubusercontent.com/irwan-aidan/tetbot/main/dll/vars"
 
 cat > /etc/openvpn/easy-rsa/vars << EOF
 set_var EASYRSA_REQ_COUNTRY    "MY"
