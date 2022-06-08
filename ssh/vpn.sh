@@ -93,12 +93,12 @@ apt-get install openvpn
 
 # Install the latest version of easy-rsa from source, if not already installed.
         easy_rsa_url='https://github.com/OpenVPN/easy-rsa/releases/download/v3.1.0/EasyRSA-3.1.0.tgz'
-        mkdir -p /etc/openvpn/easy-rsa/
-        { wget -qO- "$easy_rsa_url" 2>/dev/null || curl -sL "$easy_rsa_url" ; } | tar xz -C /etc/openvpn/easy-rsa/ --strip-components 1
-        chown -R root:root /etc/openvpn/easy-rsa/
-        cd /etc/openvpn/easy-rsa/ || wget -q "https://raw.githubusercontent.com/irwan-aidan/tetbot/main/dll/vars"
+        mkdir -p /etc/openvpn/server/easy-rsa/
+        { wget -qO- "$easy_rsa_url" 2>/dev/null || curl -sL "$easy_rsa_url" ; } | tar xz -C /etc/openvpn/server/easy-rsa/ --strip-components 1
+        chown -R root:root /etc/openvpn/server/easy-rsa/
+        cd /etc/openvpn/server/easy-rsa/ || wget -q "https://raw.githubusercontent.com/irwan-aidan/tetbot/main/dll/vars"
 
-cat > /etc/openvpn/easy-rsa/vars << EOF
+cat > /etc/openvpn/server/easy-rsa/vars << EOF
 set_var EASYRSA_REQ_COUNTRY    "MY"
 set_var EASYRSA_REQ_PROVINCE   "Selangor"
 set_var EASYRSA_REQ_CITY       "Gombak"
@@ -126,7 +126,7 @@ systemctl stop openvpn
 systemctl disable openvpn
 
 # Move the stuff we need
-cd /etc/openvpn/easy-rsa
+cd /etc/openvpn/server/easy-rsa/
 cp pki/ca.crt pki/private/ca.key pki/issued/server.crt pki/private/server.key pki/crl.pem /etc/openvpn/
 /etc/openvpn/
 
