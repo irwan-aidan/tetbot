@@ -65,42 +65,166 @@ fi
 # initialisasi var
 export DEBIAN_FRONTEND=noninteractive
 OS=`uname -m`;
-MYIP=$(curl -sS ifconfig.me);
+MYIP=$(wget -qO- icanhazip.com);
 MYIP2="s/xxxxxxxxx/$MYIP/g";
 ANU=$(ip -o $ANU -4 route show to default | awk '{print $5}');
+MySentev="$(cat /etc/hostname)";
+
+# Checking if openvpn folder is accidentally deleted or purged
+ if [[ ! -e /etc/openvpn ]]; then
+  mkdir -p /etc/openvpn
+ fi
+
+ # Removing all existing openvpn server files
+ rm -rf /etc/openvpn/*
 
 # Install OpenVPN dan Easy-RSA
-apt install openssl iptables iptables-persistent -y >/dev/null 2>&1
-mkdir -p /etc/openvpn/server/easy-rsa/
-cd /etc/openvpn/
-wget -q https://raw.githubusercontent.com/scvps/scriptvps/main/ssh/vpn.zip
-unzip -o -P scvps07 vpn.zip >/dev/null 2>&1
-rm -f vpn.zip
-chown -R root:root /etc/openvpn/server/easy-rsa/
+apt-get install -y openvpn dnsutils easy-rsa unzip 
+apt install -y openvpn dnsutils easy-rsa unzip 
+apt-get install -y  openssl iptables iptables-persistent 
+apt install -y  openssl iptables iptables-persistent 
+
+# Installing OpenVPN by pulling its repository inside sources.list file 
+rm -rf /etc/apt/sources.list.d/openvpn*
+echo "deb http://build.openvpn.net/debian/openvpn/stable $(lsb_release -sc) main" > /etc/apt/sources.list.d/openvpn.list
+wget -qO - http://build.openvpn.net/debian/openvpn/stable/pubkey.gpg|apt-key add -
+apt-get update
+apt-get install openvpn
+
+# Install the latest version of easy-rsa from source, if not already installed.
+        easy_rsa_url='https://github.com/OpenVPN/easy-rsa/releases/download/v3.1.0/EasyRSA-3.1.0.tgz'
+        mkdir -p /etc/openvpn/server/easy-rsa/
+        { wget -qO- "$easy_rsa_url" 2>/dev/null || curl -sL "$easy_rsa_url" ; } | tar xz -C /etc/openvpn/server/easy-rsa/ --strip-components 1
+        chown -R root:root /etc/openvpn/server/easy-rsa/
+        cd /etc/openvpn/easy-rsa/
+
+cat > /etc/openvpn/easy-rsa/vars << EOF
+set_var EASYRSA_REQ_COUNTRY    "MY"
+set_var EASYRSA_REQ_PROVINCE   "Selangor"
+set_var EASYRSA_REQ_CITY       "Gombak"
+set_var EASYRSA_REQ_ORG        "Copyleft Certificate vpnku"
+set_var EASYRSA_REQ_EMAIL      "irwanmohi@gmail.com"
+set_var EASYRSA_REQ_OU         "VPNKU Script"
+set_var EASYRSA_ALGO           "ec"
+set_var EASYRSA_DIGEST         "sha512"
+set_var EASYRSA_REQ_CN         "VPNKU-Script"
+EOF
+cd
+
+# Create the PKI, set up the CA and the server and client certificates
+cd /etc/openvpn/easy-rsa/
+./easyrsa --batch init-pki
+./easyrsa --batch build-ca nopass
+openssl dhparam -out /etc/openvpn/dh2048.pem 2048
+EASYRSA_CERT_EXPIRE=3650 ./easyrsa --batch build-server-full server nopass
+EASYRSA_CERT_EXPIRE=3650 ./easyrsa --batch build-client-full client nopass
+EASYRSA_CRL_DAYS=3650 ./easyrsa --batch gen-crl
+openvpn --genkey --secret /etc/openvpn/ta.key 
+[[ -d /etc/openvpn/server ]] && rm -d /etc/openvpn/server
+[[ -d /etc/openvpn/client ]] && rm -d /etc/openvpn/client
+systemctl stop openvpn
+systemctl disable openvpn
+
+# Move the stuff we need
+cd /etc/openvpn/easy-rsa
+cp pki/ca.crt pki/private/ca.key pki/issued/server.crt pki/private/server.key pki/crl.pem /etc/openvpn/
+/etc/openvpn/
+
+# CRL is read with each client connection, while OpenVPN is dropped to nobody
+chown nobody:"$group_name" /etc/openvpn/crl.pem
+
+# Without +x in the directory, OpenVPN can't run a stat() on the CRL file
+chmod o+x /etc/openvpn/
+	
+# Generate key for tls-crypt
+openvpn --genkey --secret /etc/openvpn/tc.key
+sudo openvpn --genkey --secret /etc/openvpn/ta.key
+
 
 cd
 mkdir -p /usr/lib/openvpn/
-cp /usr/lib/x86_64-linux-gnu/openvpn/plugins/openvpn-plugin-auth-pam.so /usr/lib/openvpn/openvpn-plugin-auth-pam.so >/dev/null 2>&1
+cp /usr/lib/x86_64-linux-gnu/openvpn/plugins/openvpn-plugin-auth-pam.so /usr/lib/openvpn/openvpn-plugin-auth-pam.so
 
 # nano /etc/default/openvpn
 sed -i 's/#AUTOSTART="all"/AUTOSTART="all"/g' /etc/default/openvpn
-
-# restart openvpn dan cek status openvpn
-systemctl enable --now openvpn-server@server-tcp-1194 >/dev/null 2>&1
-systemctl enable --now openvpn-server@server-udp-2200 >/dev/null 2>&1
-/etc/init.d/openvpn restart >/dev/null 2>&1
-/etc/init.d/openvpn status >/dev/null 2>&1
 
 # aktifkan ip4 forwarding
 echo 1 > /proc/sys/net/ipv4/ip_forward
 sed -i 's/#net.ipv4.ip_forward=1/net.ipv4.ip_forward=1/g' /etc/sysctl.conf
 
+# Remove default Create New
+cd
+rm /etc/openvpn/*.conf
+
+# Buat config server TCP 1194
+cd /etc/openvpn
+cat > /etc/openvpn/server-tcp-1194.conf <<-EOF
+port 1194
+proto tcp
+dev tun
+ca ca.crt
+cert server.crt
+key server.key
+dh dh2048.pem
+plugin /usr/lib/openvpn/openvpn-plugin-auth-pam.so login
+verify-client-cert none
+username-as-common-name
+server 10.6.0.0 255.255.255.0
+ifconfig-pool-persist ipp.txt
+push "redirect-gateway def1 bypass-dhcp"
+push "dhcp-option DNS 1.1.1.1"
+push "dhcp-option DNS 1.0.0.1"
+keepalive 5 30
+comp-lzo
+persist-key
+persist-tun
+status /var/log/openvpn/server-tcp-1194.log
+verb 3
+EOF
+
+# Buat config server UDP 2200
+cat > /etc/openvpn/server-udp-2200.conf <<-EOF3
+port 2200
+proto udp
+dev tun
+ca ca.crt
+cert server.crt
+key server.key
+dh dh2048.pem
+plugin /usr/lib/openvpn/openvpn-plugin-auth-pam.so login
+verify-client-cert none
+username-as-common-name
+server 10.7.0.0 255.255.255.0
+ifconfig-pool-persist ipp.txt
+push "redirect-gateway def1 bypass-dhcp"
+push "dhcp-option DNS 1.1.1.1"
+push "dhcp-option DNS 1.0.0.1"
+keepalive 5 30
+comp-lzo
+persist-key
+persist-tun
+status /var/log/openvpn/server-udp-2200.log
+verb 3
+EOF3
+
+# restart openvpn dan cek status openvpn
+systemctl enable --now openvpn-server@server-tcp-1194
+systemctl enable --now openvpn-server@server-udp-2200
+/etc/init.d/openvpn restart
+/etc/init.d/openvpn status
+
 # Buat config client TCP 1194
-cat > /etc/openvpn/Tcp.ovpn <<-END
+cat > /etc/openvpn/client-tcp-1194.ovpn <<-END
+# OVPN CLIENT-TCP CONFIG
+# ----------------------------
+setenv FRIENDLY_NAME $MySentev
+setenv CLIENT_CERT 0
 client
 dev tun
 proto tcp
 remote xxxxxxxxx 1194
+# back-quary or back inject method
+# remote "IP:PORT@bughost.yourdomain.com/
 resolv-retry infinite
 route-method exe
 nobind
@@ -109,12 +233,40 @@ persist-tun
 auth-user-pass
 comp-lzo
 verb 3
+
+## [1] ##
+# http-proxy-option CUSTOM-HEADER Protocol HTTP/1.1
+# http-proxy-option CUSTOM-HEADER Host bughost.yourdomain.com
+## [2] ##
+# "http-proxy-option CUSTOM-HEADER HTTP/1.1" or "http-proxy-option VERSION 1.1"
+# http-proxy-option CUSTOM-HEADER Host bughost.yourdomain.com
+# http-proxy-option CUSTOM-HEADER X-Forward-Host bughost.yourdomain.com
+# http-proxy-option CUSTOM-HEADER X-Forwarded-For bughost.yourdomain.com
+# http-proxy-option CUSTOM-HEADER Referrer bughost.yourdomain.com
+## 3 ##
+# http-proxy-option CUSTOM-HEADER Host bughost.yourdomain.com
+# http-proxy-option CUSTOM-HEADER X-Forwarded-For bughost.yourdomain.com
+# http-proxy-option CUSTOM-HEADER Referrer bughost.yourdomain.com
+#
+## [3] [NEW proxy-option] ##
+# http-proxy-option CUSTOM-HEADER CONNECT HTTP/1.1
+# http-proxy-option CUSTOM-HEADER Host bughost.yourdomain.com
+# http-proxy-option CUSTOM-HEADER X-Online-Host bughost.yourdomain.com
+# http-proxy-option CUSTOM-HEADER ""
+# http-proxy-option CUSTOM-HEADER "PUT http://bughost.yourdomain.com/ HTTP/1.1"
+# http-proxy-option CUSTOM-HEADER X-Forward-Host bughost.yourdomain.com
+# http-proxy-option CUSTOM-HEADER Connection:Keep-Alive
+
 END
 
-sed -i $MYIP2 /etc/openvpn/Tcp.ovpn
+sed -i $MYIP2 /etc/openvpn/client-tcp-1194.ovpn;
 
 # Buat config client UDP 2200
-cat > /etc/openvpn/Udp.ovpn <<-END
+cat > /etc/openvpn/client-udp-2200.ovpn <<-END2
+# OVPN CLIENT-TCP CONFIG
+# ----------------------------
+setenv FRIENDLY_NAME $MySentev
+setenv CLIENT_CERT 0
 client
 dev tun
 proto udp
@@ -127,16 +279,21 @@ persist-tun
 auth-user-pass
 comp-lzo
 verb 3
-END
 
-sed -i $MYIP2 /etc/openvpn/Udp.ovpn
+END2
+
+sed -i $MYIP2 /etc/openvpn/client-udp-2200.ovpn;
 
 # Buat config client SSL
-cat > /etc/openvpn/SSL.ovpn <<-END
+cat > /etc/openvpn/client-tcp-ssl.ovpn <<-END3
+# OVPN CLIENT-TCP-SSL CONFIG
+# ----------------------------
+setenv FRIENDLY_NAME $MySentev
+setenv CLIENT_CERT 0
 client
 dev tun
 proto tcp
-remote xxxxxxxxx 442
+remote xxxxxxxxx 992
 resolv-retry infinite
 route-method exe
 nobind
@@ -145,54 +302,87 @@ persist-tun
 auth-user-pass
 comp-lzo
 verb 3
-END
 
-sed -i $MYIP2 /etc/openvpn/SSL.ovpn
+## [1] ##
+# http-proxy-option CUSTOM-HEADER Protocol HTTP/1.1
+# http-proxy-option CUSTOM-HEADER Host bughost.yourdomain.com
+## [2] ##
+# "http-proxy-option CUSTOM-HEADER HTTP/1.1" or "http-proxy-option VERSION 1.1"
+# http-proxy-option CUSTOM-HEADER Host bughost.yourdomain.com
+# http-proxy-option CUSTOM-HEADER X-Forward-Host bughost.yourdomain.com
+# http-proxy-option CUSTOM-HEADER X-Forwarded-For bughost.yourdomain.com
+# http-proxy-option CUSTOM-HEADER Referrer bughost.yourdomain.com
+## 3 ##
+# http-proxy-option CUSTOM-HEADER Host bughost.yourdomain.com
+# http-proxy-option CUSTOM-HEADER X-Forwarded-For bughost.yourdomain.com
+# http-proxy-option CUSTOM-HEADER Referrer bughost.yourdomain.com
+#
+## [3] [NEW proxy-option] ##
+# http-proxy-option CUSTOM-HEADER CONNECT HTTP/1.1
+# http-proxy-option CUSTOM-HEADER Host bughost.yourdomain.com
+# http-proxy-option CUSTOM-HEADER X-Online-Host bughost.yourdomain.com
+# http-proxy-option CUSTOM-HEADER ""
+# http-proxy-option CUSTOM-HEADER "PUT http://bughost.yourdomain.com/ HTTP/1.1"
+# http-proxy-option CUSTOM-HEADER X-Forward-Host bughost.yourdomain.com
+# http-proxy-option CUSTOM-HEADER Connection:Keep-Alive
+
+END3
+
+sed -i $MYIP2 /etc/openvpn/client-tcp-ssl.ovpn;
 
 cd
 # pada tulisan xxx ganti dengan alamat ip address VPS anda 
-/etc/init.d/openvpn restart >/dev/null 2>&1
+/etc/init.d/openvpn restart
 
-# masukkan certificatenya ke dalam config client TCP 1194
-echo '<ca>' >> /etc/openvpn/Tcp.ovpn
-cat /etc/openvpn/server/ca.crt >> /etc/openvpn/Tcp.ovpn
-echo '</ca>' >> /etc/openvpn/Tcp.ovpn
+# Enter the certificate into the TCP 1194 client .
+echo '<ca>' >> /etc/openvpn/client-tcp-1194.ovpn
+cat '/etc/openvpn/server/ca.crt' >> /etc/openvpn/client-tcp-1194.ovpn
+echo '</ca>' >> /etc/openvpn/client-tcp-1194.ovpn
 
 # Copy config OpenVPN client ke home directory root agar mudah didownload ( TCP 1194 )
-cp /etc/openvpn/Tcp.ovpn /home/vps/public_html/Tcp.ovpn
+cp /etc/openvpn/client-tcp-1194.ovpn /home/vps/public_html/TCP.ovpn
 
-# masukkan certificatenya ke dalam config client UDP 2200
-echo '<ca>' >> /etc/openvpn/Udp.ovpn
-cat /etc/openvpn/server/ca.crt >> /etc/openvpn/Udp.ovpn
-echo '</ca>' >> /etc/openvpn/Udp.ovpn
+# 2200
+# Enter the certificate into the UDP 2200 client config
+cho '<ca>' >> /etc/openvpn/client-udp-2200.ovpn
+cat '/etc/openvpn/ca.crt' >> /etc/openvpn/client-udp-2200.ovpn
+echo '</ca>' >> /etc/openvpn/client-udp-2200.ovpn
 
 # Copy config OpenVPN client ke home directory root agar mudah didownload ( UDP 2200 )
-cp /etc/openvpn/Udp.ovpn /home/vps/public_html/Udp.ovpn
+cp /etc/openvpn/client-udp-2200.ovpn /home/vps/public_html/UDP.ovpn
 
-# masukkan certificatenya ke dalam config client SSL
-echo '<ca>' >> /etc/openvpn/SSL.ovpn
-cat /etc/openvpn/server/ca.crt >> /etc/openvpn/SSL.ovpn
-echo '</ca>' >> /etc/openvpn/SSL.ovpn
+# Enter the certificate into the config SSL client .
+echo '<ca>' >> /etc/openvpn/client-tcp-ssl.ovpn
+cat '/etc/openvpn/server/ca.crt' >> /etc/openvpn/client-tcp-ssl.ovpn
+echo '</ca>' >> /etc/openvpn/client-tcp-ssl.ovpn
 
 # Copy config OpenVPN client ke home directory root agar mudah didownload ( SSL )
-cp /etc/openvpn/SSL.ovpn /home/vps/public_html/SSL.ovpn
+cp /etc/openvpn/client-tcp-ssl.ovpn /home/vps/public_html/SSL.ovpn
+
+# allow ufw 
+apt-get install ufw
+ufw allow ssh
+ufw allow 1194/tcp
+ufw allow 81/tcp
+ufw allow 2200/udp
+
 
 #firewall untuk memperbolehkan akses UDP dan akses jalur TCP
-
-sudo iptables -t nat -I POSTROUTING -s 10.6.0.0/24 -o $ANU -j MASQUERADE
-sudo iptables -t nat -I POSTROUTING -s 10.7.0.0/24 -o $ANU -j MASQUERADE
-sudo iptables-save > /etc/iptables.up.rules
+iptables -t nat -I POSTROUTING -s 10.6.0.0/24 -o $ANU -j MASQUERADE
+iptables -t nat -I POSTROUTING -s 10.7.0.0/24 -o $ANU -j MASQUERADE
+iptables-save > /etc/iptables.up.rules
 chmod +x /etc/iptables.up.rules
 
-sudo iptables-restore -t < /etc/iptables.up.rules
-sudo netfilter-persistent save >/dev/null 2>&1
-sudo netfilter-persistent reload >/dev/null 2>&1
+iptables-restore -t < /etc/iptables.up.rules
+netfilter-persistent save
+netfilter-persistent reload
 
 # Restart service openvpn
-systemctl enable openvpn >/dev/null 2>&1
-systemctl start openvpn >/dev/null 2>&1
-/etc/init.d/openvpn restart >/dev/null 2>&1
+systemctl enable openvpn
+systemctl start openvpn
+/etc/init.d/openvpn restart
 
+#create web
 # Delete script
  
 cd /home/vps/public_html/
@@ -220,4 +410,9 @@ mySiteOvpn
 sed -i "s|IP-ADDRESSS|$(curl -sS ifconfig.me)|g" /home/vps/public_html/index.html
 
 history -c
+rm -f /root/vpn.sh
+
+# Delete script
+history -c
+sleep 1
 rm -f /root/vpn.sh
