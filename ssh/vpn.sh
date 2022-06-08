@@ -340,7 +340,7 @@ cat '/etc/openvpn/server/ca.crt' >> /etc/openvpn/client-tcp-1194.ovpn
 echo '</ca>' >> /etc/openvpn/client-tcp-1194.ovpn
 
 # Copy config OpenVPN client ke home directory root agar mudah didownload ( TCP 1194 )
-cp /etc/openvpn/client-tcp-1194.ovpn /home/vps/public_html/TCP.ovpn
+cp /etc/openvpn/client-tcp-1194.ovpn /home/vps/public_html/Tcp.ovpn
 
 # 2200
 # Enter the certificate into the UDP 2200 client config
@@ -349,7 +349,7 @@ cat '/etc/openvpn/ca.crt' >> /etc/openvpn/client-udp-2200.ovpn
 echo '</ca>' >> /etc/openvpn/client-udp-2200.ovpn
 
 # Copy config OpenVPN client ke home directory root agar mudah didownload ( UDP 2200 )
-cp /etc/openvpn/client-udp-2200.ovpn /home/vps/public_html/UDP.ovpn
+cp /etc/openvpn/client-udp-2200.ovpn /home/vps/public_html/Udp.ovpn
 
 # Enter the certificate into the config SSL client .
 echo '<ca>' >> /etc/openvpn/client-tcp-ssl.ovpn
