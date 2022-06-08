@@ -273,18 +273,18 @@ wget -q "https://raw.githubusercontent.com/irwan-aidan/tetbot/main/dll/cf.sh" &&
 fi
 
 wget -q -O /usr/bin/menu "https://raw.githubusercontent.com/irwan-aidan/tetbot/main/newmenu.sh" && chmod +x /usr/bin/menu
-wget -q "https://raw.githubusercontent.com/irwan-aidan/tetbot/main/ssh/ssh-vpn.sh" && chmod +x ssh-vpn.sh && screen -S sshvpn ./ssh-vpn.sh
+wget -q "https://raw.githubusercontent.com/irwan-aidan/tetbot/main/installer/ssh-vpn.sh" && chmod +x ssh-vpn.sh && screen -S sshvpn ./ssh-vpn.sh
 if [ "$coreselect" = "v2ray" ]; then
-wget -q "https://raw.githubusercontent.com/irwan-aidan/tetbot/main/v2ray/ins-vt.sh" && chmod +x ins-vt.sh && screen -S insvt ./ins-vt.sh
+wget -q "https://raw.githubusercontent.com/irwan-aidan/tetbot/main/installer/ins-vt.sh" && chmod +x ins-vt.sh && screen -S insvt ./ins-vt.sh
 elif [ "$coreselect" = "xray" ]; then
-wget -q "https://raw.githubusercontent.com/irwan-aidan/tetbot/main/xray/ins-xray.sh" && chmod +x ins-xray.sh && screen -S insxray ./ins-xray.sh
+wget -q "https://raw.githubusercontent.com/irwan-aidan/tetbot/main/installer/ins-xray.sh" && chmod +x ins-xray.sh && screen -S insxray ./ins-xray.sh
 fi
-wget -q "https://raw.githubusercontent.com/irwan-aidan/tetbot/main/wireguard/wg.sh" && chmod +x wg.sh && screen -S wg ./wg.sh
-wget -q "https://raw.githubusercontent.com/irwan-aidan/tetbot/main/sstp/sstp.sh" && chmod +x sstp.sh && screen -S sstp ./sstp.sh
-wget -q "https://raw.githubusercontent.com/irwan-aidan/tetbot/main/ipsec/ipsec.sh" && chmod +x ipsec.sh && screen -S ipsec ./ipsec.sh
-wget -q "https://raw.githubusercontent.com/irwan-aidan/tetbot/main/shadowsocks/ss.sh" && chmod +x ss.sh && screen -S ss ./ss.sh
-wget -q "https://raw.githubusercontent.com/irwan-aidan/tetbot/main/shadowsocks/ssr.sh" && chmod +x ssr.sh && screen -S ssr ./ssr.sh
-wget -q "https://raw.githubusercontent.com/irwan-aidan/tetbot/main/dll/system/set-br.sh" && chmod +x set-br.sh && screen -S sbr ./set-br.sh
+wget -q "https://raw.githubusercontent.com/irwan-aidan/tetbot/main/installer/wg.sh" && chmod +x wg.sh && screen -S wg ./wg.sh
+wget -q "https://raw.githubusercontent.com/irwan-aidan/tetbot/main/installer/sstp.sh" && chmod +x sstp.sh && screen -S sstp ./sstp.sh
+wget -q "https://raw.githubusercontent.com/irwan-aidan/tetbot/main/installer/ipsec.sh" && chmod +x ipsec.sh && screen -S ipsec ./ipsec.sh
+wget -q "https://raw.githubusercontent.com/irwan-aidan/tetbot/main/installer/ss.sh" && chmod +x ss.sh && screen -S ss ./ss.sh
+wget -q "https://raw.githubusercontent.com/irwan-aidan/tetbot/main/installer/ssr.sh" && chmod +x ssr.sh && screen -S ssr ./ssr.sh
+wget -q "https://raw.githubusercontent.com/irwan-aidan/tetbot/main/installer/set-br.sh" && chmod +x set-br.sh && screen -S sbr ./set-br.sh
 #extension
 clear
 sleep 1
@@ -316,8 +316,8 @@ echo -e "[ ${green}INFO${NC} ] Installing Successfully!!"
 sleep 1
 echo -e "[ ${green}INFO${NC} ] Dont forget to reboot later"
 #=======[ end ] ======
-wget -q -O /usr/bin/xp https://raw.githubusercontent.com/irwan-aidan/tetbot/main/dll/xp.sh && chmod +x /usr/bin/xp
-wget -q -O /usr/bin/info https://raw.githubusercontent.com/irwan-aidan/tetbot/main/dll/info.sh && chmod +x /usr/bin/info
+wget -q -O /usr/bin/xp "https://raw.githubusercontent.com/irwan-aidan/tetbot/main/dll/xp.sh && chmod" +x /usr/bin/xp
+wget -q -O /usr/bin/info "https://raw.githubusercontent.com/irwan-aidan/tetbot/main/dll/info.sh" && chmod +x /usr/bin/info
 
 wget -q -O /usr/bin/.ascii-home "https://raw.githubusercontent.com/irwan-aidan/tetbot/main/resources/ascii-home"
 cat> /root/.profile << END
