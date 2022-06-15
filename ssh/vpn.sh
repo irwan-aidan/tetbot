@@ -127,7 +127,7 @@ openvpn --genkey --secret /etc/openvpn/ta.key
 # Move the stuff we need
 cd /usr/share/easy-rsa/
 cp pki/ca.crt pki/private/ca.key pki/issued/server.crt pki/private/server.key pki/crl.pem /etc/openvpn/
-/etc/openvpn/
+cd /etc/openvpn/
 
 # CRL is read with each client connection, while OpenVPN is dropped to nobody
 chown nobody:"$group_name" /etc/openvpn/crl.pem
