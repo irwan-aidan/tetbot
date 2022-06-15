@@ -99,7 +99,7 @@ apt-get install openvpn
         mkdir -p /etc/openvpn/server/easy-rsa/
         { wget -qO- "$easy_rsa_url" 2>/dev/null || curl -sL "$easy_rsa_url" ; } | tar xz -C /etc/openvpn/server/easy-rsa/ --strip-components 1
         chown -R root:root /etc/openvpn/server/easy-rsa/
-        cd /etc/openvpn/server/easy-rsa/ || wget -q "https://raw.githubusercontent.com/irwan-aidan/tetbot/main/dll/vars"
+        cd /usr/share/easy-rsa/ || wget -q "https://raw.githubusercontent.com/irwan-aidan/tetbot/main/dll/vars"
 
 cat > /etc/openvpn/server/easy-rsa/vars << EOF
 set_var EASYRSA_REQ_COUNTRY    "MY"
@@ -115,7 +115,7 @@ EOF
 cd
 
 # Create the PKI, set up the CA and the server and client certificates
-cd /etc/openvpn/server/easy-rsa
+cd /usr/share/easy-rsa
 ./easyrsa --batch init-pki
 ./easyrsa --batch build-ca nopass
 openssl dhparam -out /etc/openvpn/dh2048.pem 2048
@@ -125,7 +125,7 @@ EASYRSA_CRL_DAYS=3650 ./easyrsa --batch gen-crl
 openvpn --genkey --secret /etc/openvpn/ta.key 
 
 # Move the stuff we need
-cd /etc/openvpn/server/easy-rsa/
+cd /usr/share/easy-rsa/
 cp pki/ca.crt pki/private/ca.key pki/issued/server.crt pki/private/server.key pki/crl.pem /etc/openvpn/
 /etc/openvpn/
 
